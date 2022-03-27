@@ -6,10 +6,10 @@ from secrets import *
 from string import *
 
 # Dictionary for letter change and special characters
-lDict = {"a": "@", "c": "C", "d": "(", "f": "F", "h": "H", "i": "!", "j": "?", "l": "|",
+lDict = {"a": "@", "c": "C", "d": "(", "e": "3", "f": "F", "h": "H", "i": "!", "j": "?", "l": "|",
          "o": "0", "p": ")", "s": "$", "u": "U", "v": "^", "w": "W", "x": "X", "z": "Z"}
 NUMBERS = digits
-ALPHABET = ascii_letters
+ALPHABET = printable
 SPECIAL_CHAR = punctuation
 
 
@@ -21,10 +21,10 @@ def generate():
 
     # Collect word from user and criteria for creation of password
     word = str(input("What word would you like to use? "))
-    min_length = int(input("How long would you like the password to be? "))
-    min_num = int(input("How many numbers total would you like? "))
-    min_sc = int(input("How many special characters would you like? "))
-    min_caplet = int(input("How many capital letters would you like? "))
+    min_length = int(input("What would you like the minimum length of the password to be? "))
+    min_num = int(input("How many numbers minimum would you like? "))
+    min_sc = int(input("How many special characters minimum would you like? "))
+    min_caplet = int(input("How many capital letters minimum would you like? "))
 
     # Iterates through word one letter, number or spec char at a time
     for w in word:
@@ -37,13 +37,20 @@ def generate():
 
     # Checks if new password meets user-generated requirements
     # min_num
-    new_pass += "".join(choice(NUMBERS) for n in range(min_num))
+    if not min_num - new_pass.count(NUMBERS) < 0:
+        new_pass += "".join(choice(NUMBERS) for n in range(min_num - new_pass.count(NUMBERS)))
+
     # min_sc
-    new_pass += "".join(choice(SPECIAL_CHAR) for n in range(min_sc))
+    if not min_sc - new_pass.count(SPECIAL_CHAR) < 0:
+        new_pass += "".join(choice(SPECIAL_CHAR) for n in range(min_sc - new_pass.count(SPECIAL_CHAR)))
+
     # min_caplet
-    new_pass += "".join(choice(ascii_uppercase) for n in range(min_caplet))
+    if not min_caplet - new_pass.count(ascii_uppercase) < 0:
+        new_pass += "".join(choice(ascii_uppercase) for n in range(min_caplet - new_pass.count(ascii_uppercase)))
+
     # min_length
-    new_pass += "".join(choice(ALPHABET) for n in range(min_length))
+    if not min_length - len(new_pass) < 0:
+        new_pass += "".join(choice(ALPHABET) for n in range(min_length - len(new_pass)))
 
     # Prints new password
     print("Here is your new strong password: " + new_pass)
